@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\StockMovementController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -24,7 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/sales', [SaleController::class, 'store']);
     Route::get('/sales/{sale}', [SaleController::class, 'show']);
 
-    // Only the owner can change catalogue and stock, and see reports
+    // Only the owner can change catalogue and stock, see reports and manage users
     Route::middleware('admin')->group(function () {
         Route::post('/categories', [CategoryController::class, 'store']);
         Route::put('/categories/{category}', [CategoryController::class, 'update']);
@@ -38,5 +39,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/stock-movements', [StockMovementController::class, 'store']);
 
         Route::get('/reports/summary', [ReportController::class, 'summary']);
+
+        Route::get('/users', [UserController::class, 'index']);
+        Route::post('/users', [UserController::class, 'store']);
+        Route::put('/users/{user}', [UserController::class, 'update']);
+        Route::delete('/users/{user}', [UserController::class, 'destroy']);
     });
 });
