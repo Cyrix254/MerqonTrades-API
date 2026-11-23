@@ -56,9 +56,16 @@ class UserController extends Controller
 
         $user->update($data);
 
-        // Deactivated or reset accounts must sign in again
+        // Deactivated or reset accounts must sign in again,
+        // but the owner keeps their own current session when editing their own account
         if (! $user->is_active || $passwordChanged) {
-            $user->tokens()->delete();
+            $tokens = $user->tokens();
+
+            if ($user->id === $request->user()->id) {
+                $tokens->where('id', '!=', $request->user()->currentAccessToken()->id);
+            }
+
+            $tokens->delete();
         }
 
         return $user->only(['id', 'name', 'email', 'role', 'is_active', 'created_at']);
