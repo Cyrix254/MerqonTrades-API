@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -19,6 +20,9 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        // Emails are always lowercase and without spaces
+        $request->merge(['email' => Str::lower(trim((string) $request->input('email')))]);
+
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email',
@@ -33,6 +37,9 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+        // Emails are always lowercase and without spaces
+        $request->merge(['email' => Str::lower(trim((string) $request->input('email')))]);
+
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],

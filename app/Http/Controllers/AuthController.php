@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        // Emails are always lowercase and without spaces
+        $request->merge(['email' => Str::lower(trim((string) $request->input('email')))]);
+
         $data = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
